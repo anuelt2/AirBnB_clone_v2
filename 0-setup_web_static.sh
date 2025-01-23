@@ -5,12 +5,14 @@ if ! command -v nginx > /dev/null 2>&1
 then
 	sudo apt-get update -y
 	sudo apt-get install -y nginx
+	sudo ufw allow OpenSSH
+	sudo ufw enable
 fi
 
 mkdir -p /data/web_static/releases/test/
 mkdir -p /data/web_static/shared/
 
-echo "<!DOCTYPE html>
+sudo echo "<!DOCTYPE html>
 <html>
 <head>
 </head>
@@ -18,8 +20,8 @@ echo "<!DOCTYPE html>
 	Welcome to Nginx Server - ALX
 </body>
 </html>" | sudo tee /data/web_static/releases/test/index.html
-ln -sf /data/web_static/releases/test/ /data/web_static/current
-chown -R ubuntu:ubuntu /data/
+sudo ln -sf /data/web_static/releases/test/ /data/web_static/current
+sudo chown -R ubuntu:ubuntu /data/
 
 NGINX_CONFIG_FILE="/etc/nginx/sites-available/default"
 
