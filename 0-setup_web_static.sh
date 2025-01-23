@@ -5,9 +5,6 @@ if ! command -v nginx > /dev/null 2>&1
 then
 	sudo apt-get update -y
 	sudo apt-get install -y nginx
-	sudo ufw allow "Nginx HTTP"
-	sudo ufw allow OpenSSH
-	sudo ufw enable
 fi
 
 mkdir -p /data/web_static/releases/test/
