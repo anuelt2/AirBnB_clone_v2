@@ -8,12 +8,9 @@ import os
 from datetime import datetime
 
 
-web_01_IP = "54.84.143.116"
-web_02_IP = "54.237.22.10"
-
 env.user = "ubuntu"
 env.key_filename = "~/.ssh/id_rsa"
-env.hosts = [web_01_IP, web_02_IP]
+env.hosts = ["web-01.anuelt.tech", "web-02.anuelt.tech"]
 
 
 def do_pack():
