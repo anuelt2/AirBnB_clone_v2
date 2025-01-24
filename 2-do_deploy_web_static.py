@@ -35,29 +35,35 @@ def do_deploy(archive_path):
     if not archive_path or not os.path.exists(archive_path):
         return False
 
-    archive_fullname = os.path.basename(archive_path)
-    archive_basename = os.path.splitext(archive_fullname)[0]
+    try:
+        archive_fullname = os.path.basename(archive_path)
+        archive_basename = os.path.splitext(archive_fullname)[0]
 
-    put(archive_path, "/tmp/")
+        put(archive_path, "/tmp/")
 
-    releases_path = f"/data/web_static/releases/"
-    archive_uncompress = f"{releases_path}{archive_basename}"
+        releases_path = f"/data/web_static/releases/"
+        archive_uncompress = f"{releases_path}{archive_basename}"
 
-    run(f"mkdir -p {archive_uncompress}")
+        run(f"mkdir -p {archive_uncompress}")
+        run(f"sudo chown -R ubuntu:ubuntu {archive_uncompress}")
 
-    run(f"tar -xvzf /tmp/{archive_fullname} -C {archive_uncompress}")
+        run(f"tar -xvzf /tmp/{archive_fullname} -C {archive_uncompress}")
 
-    run(f"rm /tmp/{archive_fullname}")
+        run(f"rm /tmp/{archive_fullname}")
 
-    run(f"mv -f {archive_uncompress}/web_static/* {archive_uncompress}/")
+        run(f"mv -f {archive_uncompress}/web_static/* {archive_uncompress}/")
 
-    run(f"rm -rf {archive_uncompress}/web_static")
+        run(f"rm -rf {archive_uncompress}/web_static")
 
-    symlink = "/data/web_static/current"
-    run(f"sudo rm -rf {symlink}")
+        symlink = "/data/web_static/current"
+        run(f"sudo rm -rf {symlink}")
 
-    run(f"sudo ln -sf {archive_uncompress} {symlink}")
-    run(f"sudo chown -R ubuntu:ubuntu {symlink}")
+        run(f"sudo ln -sf {archive_uncompress} {symlink}")
+        run(f"sudo chown -R ubuntu:ubuntu {symlink}")
 
-    print("Successful deployment!")
-    return True
+        print("Successful deployment!")
+        return True
+
+    except Exception as e:
+        print(f"Error: {e}")
+        return False
