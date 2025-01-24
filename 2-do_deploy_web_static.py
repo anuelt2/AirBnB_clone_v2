@@ -15,6 +15,7 @@ env.user = "ubuntu"
 env.key_filename = "~/.ssh/id_rsa"
 env.hosts = [web_01_IP, web_02_IP]
 
+
 def do_pack():
     """Function that generates .tgz archive"""
     local("mkdir -p versions")
@@ -34,7 +35,7 @@ def do_pack():
 
 def do_deploy(archive_path):
     """Function that distributes archive to selected web servers"""
-    if not os.path.exists(archive_path):
+    if not archive_path or not os.path.exists(archive_path):
         return False
 
     try:
@@ -52,11 +53,19 @@ def do_deploy(archive_path):
 
         run(f"rm /tmp/{archive_fullname}")
 
-        symlink = "/data/web_static/current"
-        run(f"rm -rf {symlink}")
-        run(f"ln -sf {archive_uncompress} {symlink}")
+        run(f"mv -f {archive_uncompress}/web_static/* {archive_uncompress}/")
 
+        run(f"rm -rf {archive_uncompress}/web_static")
+
+        symlink = "/data/web_static/current"
+        run(f"sudo rm -rf {symlink}")
+
+        run(f"sudo ln -sf {archive_uncompress} {symlink}")
+        run(f"sudo chown -R ubuntu:ubuntu {symlink}")
+
+        print("Successful deployment!")
         return True
 
-    except Exception:
+    except Exception as e:
+        print(f"Error: {e}")
         return False
