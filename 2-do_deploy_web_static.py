@@ -51,7 +51,7 @@ def do_deploy(archive_path):
 
         run(f"rm /tmp/{archive_fullname}")
 
-        run(f"mv -f {archive_uncompress}/web_static/* {archive_uncompress}/")
+        run(f"cp -r {archive_uncompress}/web_static/* {archive_uncompress}/")
 
         run(f"rm -rf {archive_uncompress}/web_static")
 
