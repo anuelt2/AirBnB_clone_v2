@@ -12,8 +12,7 @@ fi
 mkdir -p /data/web_static/releases/test/
 mkdir -p /data/web_static/shared/
 
-sudo echo "<!DOCTYPE html>
-<html>
+sudo echo "<html>
 <head>
 </head>
 <body>
@@ -25,10 +24,9 @@ sudo chown -R ubuntu:ubuntu /data/
 
 NGINX_CONFIG_FILE="/etc/nginx/sites-available/default"
 
-sudo cp --backup=numbered "$NGINX_CONFIG_FILE" "$NGINX_CONFIG_FILE".bak
-
 if ! grep -qF "location /hbnb_static/ {" "$NGINX_CONFIG_FILE"
 then
+	sudo cp --backup=numbered "$NGINX_CONFIG_FILE" "$NGINX_CONFIG_FILE".bak
 	sudo sed -i "/server_name/ a\\\n\tlocation /hbnb_static/ {\n\t\talias /data/web_static/current/;\n\t}" "$NGINX_CONFIG_FILE"
 fi
 
