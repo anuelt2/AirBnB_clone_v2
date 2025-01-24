@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # Script that sets up web servers for the deployment of web_static
 
-if ! command -v nginx > /dev/null
+if ! command -v nginx > /dev/null 2>&1
 then
 	sudo apt-get update -y
 	sudo apt-get install -y nginx
@@ -19,6 +19,7 @@ sudo echo "<html>
 Welcome to Nginx Server - ALX
 </body>
 </html>" | sudo tee /data/web_static/releases/test/index.html
+
 sudo ln -sf /data/web_static/releases/test/ /data/web_static/current
 sudo chown -R ubuntu:ubuntu /data/
 
@@ -27,7 +28,7 @@ NGINX_CONFIG_FILE="/etc/nginx/sites-available/default"
 if ! grep -qF "location /hbnb_static/ {" "$NGINX_CONFIG_FILE"
 then
 	sudo cp --backup=numbered "$NGINX_CONFIG_FILE" "$NGINX_CONFIG_FILE".bak
-	sudo sed -i "/server_name/ a\\\n\tlocation /hbnb_static/ {\n\t\talias /data/web_static/current/;\n\t}" "$NGINX_CONFIG_FILE"
+	sudo sed -i "/server_name _;/ a\\\n\tlocation /hbnb_static/ {\n\t\talias /data/web_static/current/;\n\t}" "$NGINX_CONFIG_FILE"
 fi
 
 sudo nginx -t
