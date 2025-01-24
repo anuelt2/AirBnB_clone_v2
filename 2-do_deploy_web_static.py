@@ -45,9 +45,8 @@ def do_deploy(archive_path):
         archive_uncompress = f"{releases_path}{archive_basename}"
 
         run(f"mkdir -p {archive_uncompress}")
-        run(f"sudo chown -R ubuntu:ubuntu {archive_uncompress}")
 
-        run(f"tar -xvzf /tmp/{archive_fullname} -C {archive_uncompress}")
+        run(f"tar -xzf /tmp/{archive_fullname} -C {archive_uncompress}")
 
         run(f"rm /tmp/{archive_fullname}")
 
@@ -56,12 +55,11 @@ def do_deploy(archive_path):
         run(f"rm -rf {archive_uncompress}/web_static")
 
         symlink = "/data/web_static/current"
-        run(f"sudo rm -rf {symlink}")
+        run(f"rm -rf {symlink}")
 
-        run(f"sudo ln -sf {archive_uncompress} {symlink}")
-        run(f"sudo chown -R ubuntu:ubuntu {symlink}")
+        run(f"ln -s {archive_uncompress} {symlink}")
 
-        print("Successful deployment!")
+        print("New version deployed!")
         return True
 
     except Exception as e:
