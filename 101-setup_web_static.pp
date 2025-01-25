@@ -2,13 +2,20 @@
 
 $html_content="
 <html>
-	<head>
-	</head>
-	<body>
-		Welcome to Nginx Server - ALX
-	</body>
+<head>
+</head>
+<body>
+Welcome to Nginx Server - ALX
+</body>
 </html>
 "
+
+$location_block="
+    location /hbnb_static/ {
+        alias /data/web_static/current/;
+    }
+"
+
 $nginx_config_file='/etc/nginx/sites-available/default'
 
 exec { 'apt-get update':
@@ -73,10 +80,11 @@ file { '/data/web_static/current':
   group   => 'ubuntu',
 }
 
-file_line { 'hbnb_static':
-  path  => '/etc/nginx/sites-available/default',
-  line  => '	location /hbnb_static/ {\n		alias /data/web_static/current/;\n	}',
-  match => 'location /hbnb_static/ {',
+exec { 'update_nginx_config':
+  command => "sed -i '/server_name _;/a ${location_block}' /etc/nginx/sites-available/default",
+  unless  => 'grep -qF "location /hbnb_static/ {" /etc/nginx/sites-available/default',
+  require => File['/data/web_static/current'],
+  path    => '/usr/bin:/usr/sbin:/bin',
 }
 
 service { 'nginx':
