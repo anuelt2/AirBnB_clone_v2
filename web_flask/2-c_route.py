@@ -19,7 +19,7 @@ def hbnb():
 
 @app.route("/c/<text>")
 def c(text):
-    """Handle requests to "/c" URL"""
+    """Handle requests to "/c/<text>" URL"""
     format_text = text.replace("_", " ")
     return f"C {format_text}"
 
