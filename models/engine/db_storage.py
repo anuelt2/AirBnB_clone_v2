@@ -1,7 +1,7 @@
 #!/usr/bin/python3
 """Database Storage Engine"""
 import os
-from sqlalchemy import create_engine
+from sqlalchemy import create_engine, inspect
 from sqlalchemy.orm import sessionmaker, scoped_session
 from models.base_model import Base
 from models.state import State
@@ -64,7 +64,14 @@ class DBStorage:
 
     def reload(self):
         """Creates all tables in the database"""
-        Base.metadata.create_all(self.__engine)
+        inspector = inspect(self.__engine)  # new line 1
+        existing_tables = inspector.get_table_names()  # new line 2
+
+        for table in Base.metadata.tables.values():
+            if table.name in existing_tables:
+                table.create(self.__engine, checkfirst=True)
+
+        # Base.metadata.create_all(self.__engine)
         Session = sessionmaker(bind=self.__engine, expire_on_commit=False)
         self.__session = scoped_session(Session)
 
