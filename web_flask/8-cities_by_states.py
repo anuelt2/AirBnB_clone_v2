@@ -17,8 +17,14 @@ def close_storage(exception=None):
 @app.route("/cities_by_states")
 def cities_by_states():
     """Handles requests to "/cities_by_states" URL"""
-    states = storage.all(State)
-    return render_template("8-cities_by_states.html", states=states.values())
+    states = storage.all(State).values()
+    states = sorted(states, key=lambda state: state.name)
+    for state in states:
+        if storage.__class__.__name__ == "DBStorage":
+            state.cities = sorted(state.cities, key=lambda city: city.name)
+        else:
+            state.cities = sorted(state.cities(), key=lambda city: city.name)
+    return render_template("8-cities_by_states.html", states=states)
 
 
 if __name__ == "__main__":
