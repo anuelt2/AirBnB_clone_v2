@@ -17,8 +17,9 @@ def close_storage(exception=None):
 @app.route("/states_list")
 def states_list():
     """Handle requests to "/states_list" URL"""
-    states = storage.all(State)
-    return render_template("7-states_list.html", states=states.values())
+    states = storage.all(State).values()
+    states = sorted(states, key=lambda state: state.name)
+    return render_template("7-states_list.html", states=states)
 
 
 if __name__ == "__main__":
