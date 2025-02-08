@@ -64,14 +64,14 @@ class DBStorage:
 
     def reload(self):
         """Creates all tables in the database"""
-        inspector = inspect(self.__engine)  # new line 1
-        existing_tables = inspector.get_table_names()  # new line 2
+        # inspector = inspect(self.__engine)  # new line 1
+        # existing_tables = inspector.get_table_names()  # new line 2
 
-        for table in Base.metadata.tables.values():
-            if table.name in existing_tables:
-                table.create(self.__engine, checkfirst=True)
+        # for table in Base.metadata.tables.values():
+        #    if table.name in existing_tables:
+        #        table.create(self.__engine, checkfirst=True)
 
-        # Base.metadata.create_all(self.__engine)
+        Base.metadata.create_all(self.__engine)
         Session = sessionmaker(bind=self.__engine, expire_on_commit=False)
         self.__session = scoped_session(Session)
 
