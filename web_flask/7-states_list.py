@@ -15,7 +15,7 @@ def close_storage(exception=None):
 
 
 @app.route("/states_list")
-def states():
+def states_list():
     """Handle requests to "/states_list" URL"""
     states = storage.all(State)
     return render_template("7-states_list.html", states=states.values())
