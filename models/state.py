@@ -13,6 +13,7 @@ class State(BaseModel, Base):
     name = Column(String(128), nullable=False)
 
     if os.getenv("HBNB_TYPE_STORAGE") == "db":
+        name = Column(String(128), nullable=False)
         cities = relationship(
                 "City",
                 backref="state",
@@ -22,6 +23,7 @@ class State(BaseModel, Base):
         @property
         def cities(self):
             """Getter for cities"""
+            from models import storage
             city_list = []
             for city in storage.all(City).values():
                 if city.state_id == self.id:
