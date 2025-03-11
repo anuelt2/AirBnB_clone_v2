@@ -19,10 +19,10 @@ def do_pack():
 
     current_time = datetime.utcnow().strftime("%Y%m%d%H%M%S")
 
-    archive_name = f"web_static_{current_time}.tgz"
-    archive_path = f"versions/{archive_name}"
+    archive_name = "web_static_{}.tgz".format(current_time)
+    archive_path = "versions/{}".format(archive_name)
 
-    tar_command = f"tar -czvf {archive_path} web_static"
+    tar_command = "tar -czvf {} web_static".format(archive_path)
     archive = local(tar_command, capture=True)
 
     if archive.failed:
@@ -41,26 +41,25 @@ def do_deploy(archive_path):
 
         put(archive_path, "/tmp/")
 
-        releases_path = f"/data/web_static/releases/"
-        archive_uncompress = f"{releases_path}{archive_basename}"
+        releases_path = "/data/web_static/releases/".format("")
+        archive_uncompress = "{}{}".format(releases_path, archive_basename)
 
-        run(f"mkdir -p {archive_uncompress}")
+        run("mkdir -p {}".format(archive_uncompress))
 
-        run(f"tar -xzf /tmp/{archive_fullname} -C {archive_uncompress}")
+        run("tar -xzf /tmp/{} -C {}".format(
+            archive_fullname, archive_uncompress))
 
-        run(f"rm /tmp/{archive_fullname}")
+        run("rm /tmp/{}".format(archive_fullname))
 
-        run(f"cp -r {archive_uncompress}/web_static/* {archive_uncompress}/")
+        run("mv {}/web_static/* {}/".format(
+            archive_uncompress, archive_fullname))
 
-        run(f"rm -rf {archive_uncompress}/web_static")
+        run("rm -rf {}/web_static".format(archive_uncompress))
 
         symlink = "/data/web_static/current"
-        run(f"rm -rf {symlink}")
+        run("rm -rf {}".format(symlink))
 
-        run(f"ln -s {archive_uncompress} {symlink}")
-
-        print("New version deployed!")
-        return True
+        run("ln -s {} {}".format(archive_uncompress, symlink))
 
     except Exception as e:
         print(f"Error: {e}")
@@ -83,20 +82,20 @@ def do_clean(number=0):
     remote_path = "/data/web_static/releases/"
 
     local_archives = local(
-            f"ls -t {local_path} | grep web_static_",
+            "ls -t {} | grep web_static_".format(local_path),
             capture=True
             )
     local_archives_list = local_archives.stdout.strip().split()
 
-    remote_archives = run(f"ls -t {remote_path} | grep web_static_")
+    remote_archives = run("ls -t {} | grep web_static_".format(remote_path))
     remote_archives_list = remote_archives.stdout.strip().split()
 
     number = max(int(number), 1)
 
     if len(local_archives_list) > number:
         for archive in local_archives_list[number:]:
-            local(f"rm -rf {local_path}/{archive}")
+            local("rm -rf {}/{}".format(local_path, archive))
 
     if len(remote_archives_list) > number:
         for archive in remote_archives_list[number:]:
-            run(f"rm -rf {remote_path}/{archive}")
+            run("rm -rf {}/{}".format(remote_path, archive))
