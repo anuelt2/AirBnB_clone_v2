@@ -19,10 +19,10 @@ def do_pack():
 
     current_time = datetime.utcnow().strftime("%Y%m%d%H%M%S")
 
-    archive_name = f"web_static_{current_time}.tgz"
-    archive_path = f"versions/{archive_name}"
+    archive_name = "web_static_{}.tgz".format(current_time)
+    archive_path = "versions/{}".format(archive_name)
 
-    tar_command = f"tar -czvf {archive_path} web_static"
+    tar_command = "tar -czvf {} web_static".format(archive_path)
     archive = local(tar_command, capture=True)
 
     if archive.failed:
@@ -41,26 +41,25 @@ def do_deploy(archive_path):
 
         put(archive_path, "/tmp/")
 
-        releases_path = f"/data/web_static/releases/"
-        archive_uncompress = f"{releases_path}{archive_basename}"
+        releases_path = "/data/web_static/releases/".format("")
+        archive_uncompress = "{}{}".format(releases_path, archive_basename)
 
-        run(f"mkdir -p {archive_uncompress}")
+        run("mkdir -p {}".format(archive_uncompress))
 
-        run(f"tar -xzf /tmp/{archive_fullname} -C {archive_uncompress}")
+        run("tar -xzf /tmp/{} -C {}".format(
+            archive_fullname, archive_uncompress))
 
-        run(f"rm /tmp/{archive_fullname}")
+        run("rm /tmp/{}".format(archive_fullname))
 
-        run(f"cp -r {archive_uncompress}/web_static/* {archive_uncompress}/")
+        run("mv {}/web_static/* {}/".format(
+            archive_uncompress, archive_fullname))
 
-        run(f"rm -rf {archive_uncompress}/web_static")
+        run("rm -rf {}/web_static".format(archive_uncompress))
 
         symlink = "/data/web_static/current"
-        run(f"rm -rf {symlink}")
+        run("rm -rf {}".format(symlink))
 
-        run(f"ln -s {archive_uncompress} {symlink}")
-
-        print("New version deployed!")
-        return True
+        run("ln -s {} {}".format(archive_uncompress, symlink))
 
     except Exception as e:
         print(f"Error: {e}")
